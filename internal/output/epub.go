@@ -1,6 +1,7 @@
 package output
 
 import (
+	"bytes"
 	"fmt"
 	"html"
 	"os"
@@ -55,14 +56,19 @@ func GenerateEPUBWithOptions(book *Book, outputPath string, opts *EPUBOptions) e
 		e.SetIdentifier(book.Identifier)
 	}
 
+	// Add CSS
 	css := getDefaultCSS()
 	if opts.CustomCSS != "" {
 		css += "\n" + opts.CustomCSS
 	}
-	cssPath, err := e.AddCSS(css, "styles.css")
-	if err != nil {
-		fmt.Printf("⚠ Warning: Failed to add CSS: %v\n", err)
-		cssPath = ""
+	
+	var cssPath string
+	if css != "" {
+		cssPath, err = e.AddCSS(bytes.NewReader([]byte(css)), "styles.css")
+		if err != nil {
+			fmt.Printf("⚠ Warning: Failed to add CSS: %v\n", err)
+			cssPath = ""
+		}
 	}
 
 	for i, ch := range book.Chapters {
@@ -99,8 +105,7 @@ func GenerateEPUBWithOptions(book *Book, outputPath string, opts *EPUBOptions) e
 }
 
 func getDefaultCSS() string {
-	return `
-body {
+	return `body {
     font-family: Georgia, "Times New Roman", serif;
     line-height: 1.6;
     margin: 1em;
