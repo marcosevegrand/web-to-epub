@@ -1,0 +1,57 @@
+# Example configuration for hybrid strategy
+# Tries multiple extraction methods for maximum compatibility
+
+book:
+  title: "Shadow Slave"
+  author: "GuiltyThree"
+  description: "A progression fantasy web novel"
+
+scraping:
+  startUrl: "https://example.com/shadow-slave/chapter-1"
+  polite:
+    delayMs: 2000
+    maxConcurrent: 1
+    respectRobotsTxt: true
+  userAgent: "Mozilla/5.0 (compatible; WebToEPUB/1.0; Personal Use)"
+  timeout: 45
+
+navigation:
+  method: "url_pattern"
+  urlPattern: "https://example.com/shadow-slave/chapter-{number}"
+  numberStart: 1
+  numberEnd: 2700
+  maxChapters: 0
+
+contentDetection:
+  strategy: "hybrid"
+  cssSelector: "article.content"
+  excludeSelectors:
+    - ".ads"
+    - ".sidebar"
+    - ".author-note"
+    - ".chapter-nav"
+    - "nav"
+    - "aside"
+    - ".comments"
+    - ".social-share"
+  textDensity:
+    minDensityScore: 0.35
+    minBlockSize: 80
+  regexPatterns:
+    - "<article[^>]*>(.*?)</article>"
+    - "<div[^>]*class=\"[^\"]*content[^\"]*\"[^>]*>(.*?)</div>"
+  domPosition:
+    maxDepth: 10
+    minWidth: 300
+
+chapterExtraction:
+  titleSelector: "h1.title, h1.chapter-title, h2.title"
+  titleRegex: "<h[12][^>]*>\\s*(?:Chapter\\s*\\d+[:\\s-]*)?([^<]+)</h[12]>"
+
+output:
+  format: "epub"
+  outputPath: "./books"
+  epubMetadata:
+    lang: "en"
+    rights: "User-extracted personal copy"
+    publisher: "Web-to-EPUB Converter"

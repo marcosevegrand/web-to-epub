@@ -1,0 +1,72 @@
+# Configuration for StoneScape (Shadow Slave) - Madara WordPress Theme
+# Web novel/manga reading platform with chapter-based content
+
+book:
+  title: "Shadow Slave"
+  author: "GuiltyThree"
+  description: "A progression fantasy web novel featuring Sunny and his journey through the Nightmare Realm"
+
+scraping:
+  startUrl: "https://stonescape.xyz/series/shadow-slave/"
+  polite:
+    delayMs: 2000
+    maxConcurrent: 1
+    respectRobotsTxt: true
+    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    timeout: 45
+
+navigation:
+  method: "url_pattern"
+  urlPattern: "https://stonescape.xyz/series/shadow-slave/ch-{number}/"
+  numberStart: 1
+  numberEnd: 2741  # 0 means follow until no next chapter available
+  nextLinkSelector: "a.btn.next_page, div.nav-next a"
+
+contentDetection:
+  strategy: "hybrid"
+  cssSelector: "div.reading-content.test-222, div.c-blog-post > div.entry-content > div.entry-content_wrap"
+  excludeSelectors:
+    - "div.entry-header"
+    - "div.wp-manga-nav"
+    - "div.select-pagination"
+    - "div.nav-links"
+    - "input#wp-manga-current-chap"
+    - "div.c-ads"
+    - "div.wall-ads-control"
+    - "aside"
+    - "nav"
+    - "script"
+    - "style"
+    - "div.manga-reading-nav-foot"
+
+textDensity:
+  minDensityScore: 0.35
+  minBlockSize: 100
+
+chapterExtraction:
+  titleSelector: "h1.c-page__title, h2.c-blog__title, .entry-title, h1"
+  titleRegex: "(?:Chapter|Ch\\.?|Episode|Ep\\.?)[\\s\\.]*(\\d+)(?:\\s*[-:]\\s*(.+))?"
+  
+  # Extract chapter number from URL as fallback
+  numberFromUrl: "ch-(\\d+)"
+
+metadata:
+  # Extract author from schema.org structured data if available
+  authorSelector: 'meta[name="author"]'
+  dateSelector: "time, span.post-on"
+  
+  # Series info from page meta
+  seriesNameSelector: "meta[property=\"og:title\"], title"
+  descriptionSelector: 'meta[name="description"]'
+
+outputFormats:
+  - epub
+  - pdf
+  
+quality:
+  # Clean HTML before saving
+  cleanHtml: true
+  # Preserve formatting
+  preserveFormatting: true
+  # Remove duplicate content
+  removeDuplicates: true

@@ -1,0 +1,45 @@
+# Example configuration for table-of-contents navigation
+# Extracts chapter list from a TOC page, then scrapes each chapter
+
+book:
+  title: "Complete Novel"
+  author: "Author Name"
+  description: "A complete novel extracted from table of contents"
+
+scraping:
+  startUrl: ""
+  polite:
+    delayMs: 2000
+    maxConcurrent: 1
+    respectRobotsTxt: true
+  timeout: 30
+
+navigation:
+  method: "toc"
+  tocUrl: "https://example.com/novel/table-of-contents"
+  tocLinkSelector: ".chapter-list a, .toc-entry a, ul.chapters li a"
+  maxChapters: 0
+
+contentDetection:
+  strategy: "hybrid"
+  cssSelector: "article.chapter-content, .story-content, .chapter-text"
+  excludeSelectors:
+    - ".ads"
+    - ".author-notes"
+    - ".navigation"
+    - ".comments"
+    - "aside"
+  textDensity:
+    minDensityScore: 0.35
+    minBlockSize: 100
+
+chapterExtraction:
+  titleSelector: "h1.chapter-title, h1.entry-title, h1"
+  titleRegex: "<h1[^>]*>([^<]+)</h1>"
+
+output:
+  format: "epub"
+  outputPath: "./books"
+  epubMetadata:
+    lang: "en"
+    rights: "Personal use only"

@@ -1,0 +1,41 @@
+# Example configuration for next-link navigation
+# Follows "next chapter" links instead of URL patterns
+
+book:
+  title: "Mystery Novel"
+  author: "Unknown"
+  description: "A web novel with dynamic chapter URLs"
+
+scraping:
+  startUrl: "https://example.com/novel/prologue"
+  polite:
+    delayMs: 2500
+    maxConcurrent: 1
+    respectRobotsTxt: true
+  timeout: 30
+
+navigation:
+  method: "next_link"
+  nextLinkSelector: "a.next-chapter, a[rel='next'], .nav-next a"
+  maxChapters: 500
+
+contentDetection:
+  strategy: "hybrid"
+  cssSelector: ".chapter-content"
+  excludeSelectors:
+    - ".ads"
+    - ".navigation"
+    - ".comments"
+  textDensity:
+    minDensityScore: 0.3
+    minBlockSize: 100
+
+chapterExtraction:
+  titleSelector: "h1.chapter-title"
+
+output:
+  format: "epub"
+  outputPath: "./books"
+  epubMetadata:
+    lang: "en"
+    rights: "Personal use only"

@@ -1,0 +1,47 @@
+# Example configuration for CSS selector strategy
+# Best for well-structured sites with consistent HTML classes/IDs
+
+book:
+  title: "My Web Novel"
+  author: "Author Name"
+  description: "A web novel with well-structured HTML"
+
+scraping:
+  startUrl: "https://example.com/stories/my-novel/chapter-1"
+  polite:
+    delayMs: 1500
+    maxConcurrent: 1
+    respectRobotsTxt: true
+  userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+  timeout: 30
+
+navigation:
+  method: "url_pattern"
+  urlPattern: "https://example.com/stories/my-novel/chapter-{number}"
+  numberStart: 1
+  numberEnd: 50
+
+contentDetection:
+  strategy: "css_selector"
+  cssSelector: "article.chapter-content"
+  excludeSelectors:
+    - ".ads"
+    - ".advertisement"
+    - ".author-note"
+    - ".chapter-navigation"
+    - ".social-share"
+    - ".comments"
+    - "script"
+    - "style"
+
+chapterExtraction:
+  titleSelector: "h1.chapter-title"
+  titleRegex: "<h1[^>]*class=\"[^\"]*chapter-title[^\"]*\"[^>]*>([^<]+)</h1>"
+
+output:
+  format: "epub"
+  outputPath: "./books"
+  epubMetadata:
+    lang: "en"
+    rights: "Personal use only"
+    publisher: "Web-to-EPUB Converter"

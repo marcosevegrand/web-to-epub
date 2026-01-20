@@ -1,0 +1,46 @@
+# Example configuration for text density strategy
+# Best for sites with poorly structured HTML where semantic tags aren't reliable
+
+book:
+  title: "Example Novel"
+  author: "Unknown Author"
+  description: "A web novel scraped using text density analysis"
+
+scraping:
+  startUrl: "https://example.com/novel/chapter-1"
+  polite:
+    delayMs: 2000
+    maxConcurrent: 1
+    respectRobotsTxt: true
+  userAgent: "Mozilla/5.0 (compatible; WebToEPUB/1.0)"
+  timeout: 30
+
+navigation:
+  method: "url_pattern"
+  urlPattern: "https://example.com/novel/chapter-{number}"
+  numberStart: 1
+  numberEnd: 100
+
+contentDetection:
+  strategy: "text_density"
+  textDensity:
+    minDensityScore: 0.4
+    minBlockSize: 100
+  excludeSelectors:
+    - ".ads"
+    - ".advertisement"
+    - ".sidebar"
+    - ".comments"
+    - "nav"
+    - "footer"
+
+chapterExtraction:
+  titleSelector: "h1"
+  titleRegex: "<h1[^>]*>([^<]+)</h1>"
+
+output:
+  format: "epub"
+  outputPath: "./books"
+  epubMetadata:
+    lang: "en"
+    rights: "Personal use only"
