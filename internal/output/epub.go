@@ -55,29 +55,14 @@ func GenerateEPUBWithOptions(book *Book, outputPath string, opts *EPUBOptions) e
 		e.SetIdentifier(book.Identifier)
 	}
 
-	// Add CSS - AddCSS expects CSS content as string, not file path
-	css := getDefaultCSS()
-	if opts.CustomCSS != "" {
-		css += "\n" + opts.CustomCSS
-	}
-	
-	var cssPath string
-	if css != "" {
-		// The AddCSS function signature: AddCSS(cssContent string, destFilename string) (string, error)
-		cssPath, err = e.AddCSS(css, "styles.css")
-		if err != nil {
-			fmt.Printf("⚠ Warning: Failed to add CSS: %v\n", err)
-			cssPath = ""
-		}
-	}
-
 	for i, ch := range book.Chapters {
 		cleanContent := sanitizeHTML(ch.Content)
 		cleanContent = normalizeForEPUB(cleanContent)
 
 		sectionBody := formatChapterHTML(ch.Title, cleanContent)
 
-		_, err := e.AddSection(sectionBody, ch.Title, "", cssPath)
+		// Add section without CSS to avoid library issues
+		_, err := e.AddSection(sectionBody, ch.Title, "", "")
 		if err != nil {
 			fmt.Printf("⚠ Warning: Error adding chapter %d (%s): %v\n", i+1, ch.Title, err)
 		}
@@ -102,90 +87,6 @@ func GenerateEPUBWithOptions(book *Book, outputPath string, opts *EPUBOptions) e
 	}
 
 	return nil
-}
-
-func getDefaultCSS() string {
-	return `body {
-    font-family: Georgia, "Times New Roman", serif;
-    line-height: 1.6;
-    margin: 1em;
-    padding: 0;
-}
-
-h1 {
-    font-size: 1.5em;
-    margin-top: 1em;
-    margin-bottom: 0.5em;
-    page-break-after: avoid;
-}
-
-h2 {
-    font-size: 1.3em;
-    margin-top: 0.8em;
-    margin-bottom: 0.4em;
-}
-
-h3 {
-    font-size: 1.1em;
-    margin-top: 0.6em;
-    margin-bottom: 0.3em;
-}
-
-p {
-    margin: 0.5em 0;
-    text-align: justify;
-    text-indent: 1.5em;
-}
-
-p:first-of-type {
-    text-indent: 0;
-}
-
-blockquote {
-    margin: 1em 2em;
-    padding: 0.5em 1em;
-    border-left: 3px solid #ccc;
-    font-style: italic;
-}
-
-pre, code {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.9em;
-}
-
-pre {
-    padding: 1em;
-    background-color: #f5f5f5;
-    overflow-x: auto;
-    white-space: pre-wrap;
-}
-
-hr {
-    border: none;
-    border-top: 1px solid #ccc;
-    margin: 2em 0;
-}
-
-a {
-    color: #0066cc;
-    text-decoration: none;
-}
-
-img {
-    max-width: 100%;
-    height: auto;
-}
-
-.chapter-title {
-    text-align: center;
-    margin-bottom: 2em;
-}
-
-.separator {
-    text-align: center;
-    margin: 2em 0;
-}
-`
 }
 
 func formatChapterHTML(title, content string) string {
