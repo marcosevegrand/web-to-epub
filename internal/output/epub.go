@@ -1,7 +1,6 @@
 package output
 
 import (
-	"bytes"
 	"fmt"
 	"html"
 	"os"
@@ -56,7 +55,7 @@ func GenerateEPUBWithOptions(book *Book, outputPath string, opts *EPUBOptions) e
 		e.SetIdentifier(book.Identifier)
 	}
 
-	// Add CSS
+	// Add CSS - AddCSS expects CSS content as string, not file path
 	css := getDefaultCSS()
 	if opts.CustomCSS != "" {
 		css += "\n" + opts.CustomCSS
@@ -64,7 +63,8 @@ func GenerateEPUBWithOptions(book *Book, outputPath string, opts *EPUBOptions) e
 	
 	var cssPath string
 	if css != "" {
-		cssPath, err = e.AddCSS(bytes.NewReader([]byte(css)), "styles.css")
+		// The AddCSS function signature: AddCSS(cssContent string, destFilename string) (string, error)
+		cssPath, err = e.AddCSS(css, "styles.css")
 		if err != nil {
 			fmt.Printf("⚠ Warning: Failed to add CSS: %v\n", err)
 			cssPath = ""
